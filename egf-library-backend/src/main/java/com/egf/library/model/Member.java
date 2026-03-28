@@ -27,8 +27,11 @@ public class Member {
 
     private String address;
 
-    @Column(updatable = false)
-    private LocalDateTime joinedAt = LocalDateTime.now();
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime createdAt;
+
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime joinedAt;
 
     private boolean active = true;
 }

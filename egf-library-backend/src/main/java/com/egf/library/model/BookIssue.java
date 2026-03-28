@@ -42,8 +42,11 @@ public class BookIssue {
 
     private String remarks;
 
-    @Column(updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime createdAt;
+
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime joinedAt;
 
     public enum IssueStatus {
         ISSUED, RETURNED, OVERDUE

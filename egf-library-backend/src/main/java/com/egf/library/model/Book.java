@@ -43,8 +43,11 @@ public class Book {
     @Enumerated(EnumType.STRING)
     private BookStatus status = BookStatus.AVAILABLE;
 
-    @Column(updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime createdAt;
+
+    @Column(columnDefinition = "datetime")
+    private LocalDateTime joinedAt;
 
     public enum BookStatus {
         AVAILABLE, ISSUED, OUT_OF_STOCK
