@@ -18,17 +18,21 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // ✅ Only create if user doesn't already exist
-        if (!userRepository.existsByUsername("hari")) {
-            User admin = new User();
-            admin.setUsername("hari");
-            admin.setPassword(passwordEncoder.encode("hari"));
-            admin.setFullName("hari");
-            admin.setRole("INCHARGE");
-            userRepository.save(admin);
-            System.out.println("✅ Default user created: username=hari");
-        } else {
-            System.out.println("ℹ️ User already exists, skipping creation");
+        try {
+            if (!userRepository.existsByUsername("hari")) {
+                User admin = new User();
+                admin.setUsername("hari");
+                admin.setPassword(passwordEncoder.encode("hari"));
+                admin.setFullName("hari");
+                admin.setRole("INCHARGE");
+                userRepository.save(admin);
+                System.out.println("✅ Default user created");
+            } else {
+                System.out.println("ℹ️ User already exists, skipping");
+            }
+        } catch (Exception e) {
+            // ✅ Don't crash app if user creation fails
+            System.out.println("⚠️ DataInitializer skipped: " + e.getMessage());
         }
     }
 }
