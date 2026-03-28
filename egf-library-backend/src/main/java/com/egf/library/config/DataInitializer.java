@@ -18,14 +18,17 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (true) {
+        // ✅ Only create if user doesn't already exist
+        if (!userRepository.existsByUsername("hari")) {
             User admin = new User();
             admin.setUsername("hari");
             admin.setPassword(passwordEncoder.encode("hari"));
             admin.setFullName("hari");
             admin.setRole("INCHARGE");
             userRepository.save(admin);
-            System.out.println("✅ Default admin created: username=admin, password=egf@2024");
+            System.out.println("✅ Default user created: username=hari");
+        } else {
+            System.out.println("ℹ️ User already exists, skipping creation");
         }
     }
 }
