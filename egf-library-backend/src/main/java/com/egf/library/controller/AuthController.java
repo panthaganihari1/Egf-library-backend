@@ -54,6 +54,11 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("Working Properly");
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> request) {
         if (userRepository.existsByUsername(request.get("username"))) {
