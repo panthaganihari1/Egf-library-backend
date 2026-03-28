@@ -18,7 +18,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (true) {
+        if (false) {
             User admin = new User();
             admin.setUsername("hari");
             admin.setPassword(passwordEncoder.encode("hari"));
