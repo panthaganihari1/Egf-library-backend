@@ -27,10 +27,10 @@ public class Member {
 
     private String address;
 
-    @Column(columnDefinition = "datetime")
+    // ✅ Fixed
     private LocalDateTime createdAt;
 
-    @Column(columnDefinition = "datetime")
+    // ✅ Fixed
     private LocalDateTime joinedAt;
 
     private boolean active = true;

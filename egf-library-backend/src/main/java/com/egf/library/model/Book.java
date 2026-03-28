@@ -43,10 +43,10 @@ public class Book {
     @Enumerated(EnumType.STRING)
     private BookStatus status = BookStatus.AVAILABLE;
 
-    @Column(columnDefinition = "datetime")
+    // ✅ Fixed
     private LocalDateTime createdAt;
 
-    @Column(columnDefinition = "datetime")
+    // ✅ Fixed
     private LocalDateTime joinedAt;
 
     public enum BookStatus {

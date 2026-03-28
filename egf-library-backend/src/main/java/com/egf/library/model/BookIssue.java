@@ -35,17 +35,17 @@ public class BookIssue {
     private LocalDate returnDate;
 
     @Column(nullable = false)
-    private String issuedBy; // Incharge name
+    private String issuedBy;
 
     @Enumerated(EnumType.STRING)
     private IssueStatus status = IssueStatus.ISSUED;
 
     private String remarks;
 
-    @Column(columnDefinition = "datetime")
+    // ✅ Fixed
     private LocalDateTime createdAt;
 
-    @Column(columnDefinition = "datetime")
+    // ✅ Fixed
     private LocalDateTime joinedAt;
 
     public enum IssueStatus {
