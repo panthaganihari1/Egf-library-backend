@@ -2,9 +2,15 @@ package com.egf.library.controller;
 
 import com.egf.library.model.Book;
 import com.egf.library.repository.BookRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +21,12 @@ public class BookController {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
     public List<Book> getAllBooks() {
@@ -39,25 +51,53 @@ public class BookController {
     }
 
     @PostMapping
-    public Book createBook(@RequestBody Book book) {
-        book.setAvailableCopies(book.getTotalCopies());
-        return bookRepository.save(book);
+    public ResponseEntity<?> createBook(@RequestPart("book") String bookJson, @RequestPart(value = "file", required = false) MultipartFile file) {
+        try {
+            Book book = objectMapper.readValue(bookJson, Book.class);
+            if (file != null && !file.isEmpty()) {
+                Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+                book.setCoverImageUrl(uploadResult.get("url").toString());
+            }
+
+            return ResponseEntity.ok(bookRepository.save(book));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error creating book: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-        return bookRepository.findById(id).map(book -> {
-            book.setTitle(bookDetails.getTitle());
-            book.setAuthor(bookDetails.getAuthor());
-            book.setCategory(bookDetails.getCategory());
-            book.setPublisher(bookDetails.getPublisher());
-            book.setIsbn(bookDetails.getIsbn());
-            book.setDescription(bookDetails.getDescription());
-            book.setLanguage(bookDetails.getLanguage());
-            book.setPublishedYear(bookDetails.getPublishedYear());
-            book.setTotalCopies(bookDetails.getTotalCopies());
-            return ResponseEntity.ok(bookRepository.save(book));
-        }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> updateBook(@PathVariable Long id, @RequestPart("book") String bookJson, @RequestPart(value = "file", required = false) MultipartFile file) {
+        try {
+            Book updated = objectMapper.readValue(bookJson, Book.class);
+
+            return bookRepository.findById(id).map(book -> {
+                book.setTitle(updated.getTitle());
+                book.setAuthor(updated.getAuthor());
+                book.setCategory(updated.getCategory());
+                book.setPublisher(updated.getPublisher());
+                book.setIsbn(updated.getIsbn());
+                book.setDescription(updated.getDescription());
+                book.setLanguage(updated.getLanguage());
+                book.setPublishedYear(updated.getPublishedYear());
+                book.setTotalCopies(updated.getTotalCopies());
+
+                if (file != null && !file.isEmpty()) {
+                    try {
+                        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+                        book.setCoverImageUrl(uploadResult.get("url").toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException("Image upload failed: " + e.getMessage());
+                    }
+                }
+
+                return ResponseEntity.ok(bookRepository.save(book));
+
+            }).orElse(ResponseEntity.notFound().build());
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating book: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

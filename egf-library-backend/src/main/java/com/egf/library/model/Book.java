@@ -1,9 +1,10 @@
 package com.egf.library.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,30 +25,37 @@ public class Book {
     private String author;
 
     private String category;
-
     private String publisher;
-
     private String isbn;
 
     private Integer totalCopies = 1;
-
     private Integer availableCopies = 1;
 
     @Column(length = 500)
     private String description;
 
     private String language;
-
     private Integer publishedYear;
 
     @Enumerated(EnumType.STRING)
     private BookStatus status = BookStatus.AVAILABLE;
 
-    // ✅ Fixed
-    private LocalDateTime createdAt;
+    @Column(length = 1000)
+    private String coverImageUrl;
 
-    // ✅ Fixed
-    private LocalDateTime joinedAt;
+    // ✅ ADD THESE
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
     public enum BookStatus {
         AVAILABLE, ISSUED, OUT_OF_STOCK
