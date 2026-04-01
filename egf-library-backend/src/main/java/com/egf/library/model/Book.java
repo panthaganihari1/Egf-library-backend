@@ -43,7 +43,8 @@ public class Book {
     @Column(length = 1000)
     private String coverImageUrl;
 
-    // ✅ ADD THESE
+    private String owner;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

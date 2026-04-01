@@ -7,7 +7,6 @@ import com.cloudinary.utils.ObjectUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,9 +50,12 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createBook(@RequestPart("book") String bookJson, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<?> createBook(
+            @RequestPart("book") String bookJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
             Book book = objectMapper.readValue(bookJson, Book.class);
+
             if (file != null && !file.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
                 book.setCoverImageUrl(uploadResult.get("url").toString());
@@ -67,7 +69,10 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBook(@PathVariable Long id, @RequestPart("book") String bookJson, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<?> updateBook(
+            @PathVariable Long id,
+            @RequestPart("book") String bookJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
             Book updated = objectMapper.readValue(bookJson, Book.class);
 
@@ -81,6 +86,7 @@ public class BookController {
                 book.setLanguage(updated.getLanguage());
                 book.setPublishedYear(updated.getPublishedYear());
                 book.setTotalCopies(updated.getTotalCopies());
+                book.setOwner(updated.getOwner());   // ✅ NEW — save owner field
 
                 if (file != null && !file.isEmpty()) {
                     try {
